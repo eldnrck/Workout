@@ -1,14 +1,13 @@
+import { useState } from "react";
+import { Box } from "@mui/material";
+import Divider from "@mui/material/Divider";
+
 import data from "../data/stat-card.data";
 import StatCard from "../components/StatCard";
-import type Workout  from "../interface/StatCard.interface";
-import { Box } from "@mui/material";
-import Divider from '@mui/material/Divider';
 import RecentWorkouts from "../components/RecentWorkout";
+import type Workout from "../interface/StatCard.interface";
 
-
-const totalWorkout = data.length
-const totalMinutes = data.reduce((acc, workout) => acc + workout.value, 0);
-const getWorkoutStreak = (workouts: Workout[]): number =>{;
+const getWorkoutStreak = (workouts: Workout[]): number => {
   if (!workouts.length) return 0;
 
   const sorted = [...workouts].sort(
@@ -21,7 +20,9 @@ const getWorkoutStreak = (workouts: Workout[]): number =>{;
     const currentDate = new Date(sorted[i].date);
     const previousDate = new Date(sorted[i - 1].date);
 
-    const diffDays = (currentDate.getTime() - previousDate.getTime()) / (1000 * 60 * 60 * 24);
+    const diffDays =
+      (currentDate.getTime() - previousDate.getTime()) /
+      (1000 * 60 * 60 * 24);
 
     if (diffDays === 1) {
       streak++;
@@ -32,10 +33,8 @@ const getWorkoutStreak = (workouts: Workout[]): number =>{;
 
   return streak;
 };
-const getFavoriteWorkout = (workouts: Workout[]): string =>{
-  
-  const getWorkouts = workouts.map((workout) => workout.title);
 
+const getFavoriteWorkout = (workouts: Workout[]): string => {
   const counts = {
     Boxing: 0,
     Running: 0,
@@ -43,8 +42,8 @@ const getFavoriteWorkout = (workouts: Workout[]): string =>{
     Lifting: 0,
   };
 
-  for (const workout of getWorkouts){
-    switch(workout.toUpperCase()){
+  for (const workout of workouts) {
+    switch (workout.title.toUpperCase()) {
       case "BOXING":
         counts.Boxing++;
         break;
@@ -59,58 +58,67 @@ const getFavoriteWorkout = (workouts: Workout[]): string =>{
         break;
     }
   }
+
   let favorite = "";
   let highest = -1;
 
-    for (const [name, count] of Object.entries(counts)) {
+  for (const [name, count] of Object.entries(counts)) {
     if (count > highest) {
       highest = count;
       favorite = name;
     }
   }
 
-   return favorite;
-
-  ;
-}
+  return favorite;
+};
 
 const Dashboard = () => {
-  
-  return (
-<>
-    <Box
-      sx={{
-        display: "flex",
-        flexWrap: "wrap",
-        gap: 2,
-      }}
-    >
-      <StatCard 
-      title="Total Workouts" 
-      value = {totalWorkout}
-      />
-      <StatCard 
-      title="Total Minutes" 
-      value = {totalMinutes}
-      />
-      <StatCard 
-      title="Current Streak " 
-      value = {getWorkoutStreak(data)}
-      />
-      <StatCard 
-      title="Favorite Workout " 
-      value = {getFavoriteWorkout(data)}
-      />
-    </Box>
-  
-    <Divider sx={{
-      marginTop: '3rem'
-    }}>Recent Workouts</Divider>
+  const [workouts, setWorkouts] = useState<Workout[]>(data);
 
-    <RecentWorkouts />  
-  </>
-    
-  )
-}
+  const totalWorkout = workouts.length;
+
+  const totalMinutes = workouts.reduce(
+    (acc, workout) => acc + workout.value,
+    0
+  );
+
+  return (
+    <>
+      <Box
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 2,
+        }}
+      >
+        <StatCard
+          title="Total Workouts"
+          value={totalWorkout}
+        />
+
+        <StatCard
+          title="Total Minutes"
+          value={totalMinutes}
+        />
+
+        <StatCard
+          title="Current Streak"
+          value={getWorkoutStreak(workouts)}
+        />
+
+        <StatCard
+          title="Favorite Workout"
+          value={getFavoriteWorkout(workouts)}
+        />
+      </Box>
+
+      <Divider sx={{ mt: 3 }}>
+        Recent Workouts
+      </Divider>
+
+      <RecentWorkouts workouts={workouts} />
+    </>
+  );
+};
 
 export default Dashboard;

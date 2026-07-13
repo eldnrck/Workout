@@ -1,13 +1,15 @@
-import Box from "@mui/material/Box";
-import data from "../data/stat-card.data";
+import type Workout from "../interface/StatCard.interface";
+import { Box } from "@mui/material";
 
+interface RecentWorkoutProps {
+  workouts: Workout[];
+}
 
-const recentWorkouts = [...data]
-  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-  .slice(0, 3);
+const RecentWorkout = ({ workouts }: RecentWorkoutProps) => {
+  const recentWorkouts = [...workouts]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 3);
 
-
-const RecentWorkout = () => {
     return (
         <Box
         component="ul"
