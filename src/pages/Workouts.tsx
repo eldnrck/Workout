@@ -1,6 +1,10 @@
+import AddWorkoutButton from "../components/AddWorkoutButton"
+
 const Workouts = () => {
   
-  return <h1>Workouts</h1>;
+  return (
+    <AddWorkoutButton />
+  );
         
 }
 
